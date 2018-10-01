@@ -1,0 +1,937 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>敏捷测试管理平台</title>
+    <link href="element-ui/lib/theme-default/index.css" rel="stylesheet" />
+    <style>
+        * {
+            font-family:微软雅黑;
+        }
+        body {
+            margin:0 2px;
+        }
+        .demo-table-expand {
+            font-size: 0;
+        }
+
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 50%;
+        }
+        .demo-table-expand2 .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 33%;
+        }
+        .sub-title {
+            color: #48576a
+        }
+        [v-cloak] {
+            display: none;
+        }
+        .el-table2 {
+            border: 1px solid #eee;
+        }
+        .a-css {
+            width: 28px;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            background: #fff;
+            border: 1px solid #c4c4c4;
+            color: #1f2d3d;
+            margin: 0;
+            padding: 10px 15px;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+            float: left;
+            margin-right: 20px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .el-pager li.active {
+            border-color: #003473;
+            background-color: #003473;
+            color: #fff;
+            cursor: default;
+        }
+        .el-button--primary:focus, .el-button--primary:hover {
+            background: #003473;
+            border-color: #003473;
+            color: #fff;
+        }
+        .el-tabs__item {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .el-tabs__item.is-active {
+            color: #003473;
+        }
+        .el-button--text {
+            border: none;
+            color: #003473;
+            background: 0 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .el-button--primary {
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+        }
+        .caseListCss{
+            display:none;
+        }
+        .el-table__expanded-cell{
+            padding:20px 30px;
+        }
+        .el-table .cell, .el-table th > div {
+            padding-left: 10px;
+            padding-right: 10px;
+            box-sizing: border-box;
+            text-overflow: ellipsis;
+        }
+        .el-tabs--border-card > .el-tabs__content {
+            padding: 10px;
+        }
+        .el-form-item {
+            margin-bottom: 10px;
+        }
+        .el-table td, .el-table th {
+             height: 20px; 
+            min-width: 0;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            margin:0;
+            padding:0;
+        }
+        .el-table__expand-icon {
+            height: 20px;
+        }
+        .cell .el-button {
+            padding: 7px 0px;
+        }
+        .el-icon-arrow-right:before {
+            content: "";
+        }
+        .el-form-item__error {
+            color: #ff4949;
+            font-size: 0px;
+            line-height: 1;
+            padding-top: 4px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: -30px;
+        }
+        .el-dialog.el-dialog--small{
+            top:5%;
+        }
+        .el-dialog__body {
+            padding: 10px 20px;
+            color: #48576a;
+            font-size: 14px;
+        }
+        .el-dialog__footer {
+            padding: 0px 20px 15px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body >
+    <div id="app" v-cloak>
+        <el-row>
+            <el-col :span="12">
+                <div style="margin:9px 10px 3px;"><img src="images/logobg.png" width="300" /></div>
+            </el-col>
+            <el-col :span="12">
+                <div style="float:right;margin:10px 20px 10px;">
+                    <el-button type="text" @click="exitLogin()">退出</el-button>
+                </div>
+            </el-col>
+        </el-row>
+
+        <el-tabs type="border-card" v-model="activeName" @tab-click="tabClick">
+            <el-tab-pane label="案例管理" name="first">
+
+                <el-form :inline="true" class="demo-form-inline">
+                    <el-form-item label="需求编号" v-show="false">
+                        <el-input v-model="caseIDQuery" placeholder="需求编号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="需求名称">
+                        <el-input v-model="caseNameQuery" placeholder="需求名称" style="width:420px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="float:left;margin-right:20px;" icon="search" @click="getTestCaseList(1)">查询</el-button>
+                        <a id="dp" :href="downloadurl" class="a-css" style="display: block;"><span id="fp">导出</span></a>
+
+                      <!--  <el-button type="text" @click="dataMigration()" title="数据迁移">数据迁移需求</el-button>
+                        <el-button type="text" @click="dataMigrationCase()" title="数据迁移">数据迁移案例</el-button> -->
+                    </el-form-item>
+
+                </el-form>
+               
+                <el-row>
+                    <el-col :span="12">
+                        <div class="grid-content bg-purple">
+                            <template>
+                                <el-table :data="testCaseList"
+                                          :row-key="getRowKeys"
+                                          :expand-row-keys="expands"
+                                          
+                                            v-loading="loading1"
+                                            element-loading-text="拼命加载中"
+                                          ref="multipleTable"
+                                          style="width: 100%;"
+                                          height="650"
+                                          >
+                                    <el-table-column type="expand"  width="1px">
+                                        <template scope="scope">   
+                                            <el-table :data="caseList" 
+                                                      height="400"
+                                                      width="650"
+
+                                                      
+                                                      @selection-change="handleSelectionChange">
+                                                <el-table-column type="selection">
+                                                </el-table-column>
+                                                <el-table-column label="案例编号" prop="caseCode">
+                                                    <template scope="cl">
+                                                        <label v-html="cl.row.caseCode" @click="editCaseInfo(cl.row)" style="display: block;cursor:pointer;"></label>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column label="案例名称" prop="caseName">
+                                                    <template scope="cl">
+                                                        <label v-html="cl.row.caseName" @click="editCaseInfo(cl.row)"></label>
+                                                    </template>
+                                                </el-table-column>
+                                                <el-table-column label="操作" width="130">
+                                                    <template scope="cl">
+                                                        <el-button type="text" @click="copyCaseInfo(scope.row.demandID,scope.row.demandName,scope.row.ID,cl.row.ID)" class="el-icon-document" title="复制">复制</el-button>
+                                                        
+                                                        <el-button type="text" @click="deleteCaseInfo(scope.row.demandID,scope.row.demandName,scope.row.ID,cl.row.ID)" class="el-icon-delete" title="删除">删除</el-button>
+                                                    </template>
+                                                </el-table-column>
+                                            </el-table>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column type="index" label="#" width="40">
+                                    </el-table-column>
+                                    <el-table-column label="需求名称"
+                                                     prop="demandName">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.demandName" @click="tableRowClick(scope.row)" style="display: block;cursor:pointer;"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="操作" width="110">
+                                        <template scope="scope">
+                                            <el-button type="text" @click="addCaseInfo(scope.row.ID,scope.row.demandID,scope.row.demandName)" title="新增案例">新增</el-button>
+                                           
+                                            <el-button type="text" @click="importCaseExcel(scope.row.demandID,scope.row.ID)" title="导入案例">导入</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+
+                            </template>
+                        </div>
+
+                        <div class="block" style="float: right;margin-bottom: 15px;margin-top:10px;">
+
+                            <el-pagination @size-change="caseSizeChange"
+                                           @current-change="caseCurrentChange"
+                                           :current-page.sync="casePageIndex"
+                                           :page-size="casePageSize"
+                                           layout="prev, pager, next, jumper"
+                                           :total="caseTotalRows">
+                            </el-pagination>
+                        </div>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <div>
+
+                            <span style="margin-left:30px;font-size:14px;color:#007314;font-weight:bold;" v-if="operateNo=='0'"><el-button type="text" class="el-icon-circle-plus-outline" title="新增">新增</el-button></span>
+                            <span style="margin-left:30px;font-size:14px;color:#007314;font-weight:bold;" v-if="operateNo=='1'"><el-button type="text" class="el-icon-document" title="复制">复制</el-button></span>
+                            <span style="margin-left:30px;font-size:14px;color:#007314;font-weight:bold;" v-if="operateNo=='2'"><el-button type="text" class="el-icon-edit" title="编辑">编辑</el-button></span>
+                            <br />
+                            
+                        </div>
+                        <div class="grid-content bg-purple-light">
+
+                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" inline label-width="100px" class="demo-ruleForm">
+                                
+                                <!--<el-form-item label="需求名称" prop="demandName">
+                                </el-form-item><br />-->
+                                <el-form-item label="案例编号" prop="caseCode">
+
+                                    <label v-html="ruleForm.ID" style="display:none;"></label>
+                                    <label v-html="ruleForm.demandID" style="display:none;"></label>
+                                    <el-input type="textarea" style="width: 500px; display: none;"
+                                              v-model="ruleForm.demandName"
+                                              :autosize="{ minRows: 2, maxRows: 2}"></el-input>
+                                    <el-input v-model="ruleForm.caseID" style="display:none;"></el-input>
+                                    <el-input v-model="ruleForm.caseCode" style="width:500px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="案例名称" prop="caseName">
+                                    <el-input v-model="ruleForm.caseName" style="width:500px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="前置条件" prop="precondition">
+                                    <el-input v-model="ruleForm.precondition" style="width:500px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="功能模块" prop="functionModule">
+                                    <el-input v-model="ruleForm.functionModule" style="width:192px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="功能点" prop="functionPoint">
+                                    <el-input v-model="ruleForm.functionPoint" style="width:192px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="案例性质" prop="caseNature">
+                                    <el-select v-model="ruleForm.caseNature" placeholder="请选择" style="width:192px;">
+                                        <el-option v-for="item in caseNatureList"
+                                                   :key="item.value"
+                                                   :label="item.label"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="案例类型" prop="caseType">
+                                    <el-select v-model="ruleForm.caseType" placeholder="请选择" style="width:192px;">
+                                        <el-option v-for="item in caseTypeList"
+                                                   :key="item.value"
+                                                   :label="item.label"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="案例描述" prop="caseDescription">
+                                    <el-input type="textarea" style="width:500px"
+                                              v-model="ruleForm.caseDescription"
+                                              :autosize="{ minRows: 6, maxRows: 6}"></el-input>
+                                </el-form-item>
+                                <el-form-item label="预期结果" prop="expectedResult">
+                                    <el-input type="textarea" style="width:500px"
+                                              v-model="ruleForm.expectedResult"
+                                              :autosize="{ minRows: 6, maxRows: 6}"></el-input>
+                                </el-form-item>
+                                <!--<el-form-item label="执行人 " prop="caseOP" style="float:left">
+                                    <el-select v-model="ruleForm.caseOP" placeholder="请选择" style="width:192px;">
+                                        <el-option v-for="item in caseOPList"
+                                                   :key="item.value"
+                                                   :label="item.label"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>-->
+                                <el-form-item label="实际结果" prop="actualResult">
+                                    <el-select v-model="ruleForm.actualResult" placeholder="请选择" style="width:192px;">
+                                        <el-option v-for="item in actualResultList"
+                                                   :key="item.value"
+                                                   :label="item.label"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="优先级" prop="priority">
+                                    <el-select v-model="ruleForm.priority" placeholder="请选择" style="width:192px;">
+                                        <el-option v-for="item in priorityList"
+                                                   :key="item.value"
+                                                   :label="item.label"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="测试备注" prop="caseRemarks">
+                                    <el-input v-model="ruleForm.caseRemarks" style="width:500px;"></el-input>
+                                </el-form-item>
+
+                                <el-form-item style="float:right">
+                                    <el-button type="primary" id="btnCase" @click="submitForm('ruleForm')">提交</el-button>
+                                    <el-button @click="resetForm('ruleForm')">重置</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+
+                    </el-col>
+                </el-row>
+
+            </el-tab-pane>
+            <el-tab-pane label="需求管理" name="second">
+                <el-button type="text" @click="importDemandExcel()">导入Excel</el-button>
+
+
+                <el-form inline class="demo-form-inline">
+                    <el-form-item label="需求名称"> 
+                        <el-input v-model="demands.demandName" placeholder="需求名称" style="width:350px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="float:left;margin-right:20px;" icon="search" @click="getDemandList(1)">查询</el-button>
+                        <a id="dp" :href="downloadurl" class="a-css" style="display: block;"><span id="fp">导出</span></a>
+
+                    </el-form-item>
+
+                </el-form>
+                <el-row>
+                    <el-col :span="30">
+                        <div class="grid-content bg-purple">
+                            <template>
+                                <el-table :data="demandList"
+                                          v-loading="loading1"
+                                          element-loading-text="拼命加载中"
+                                          style="width:100%;" height="720">
+                                    <el-table-column type="index" label="#" width="40">
+                                    </el-table-column>
+                                    <el-table-column label="需求名称">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.demandName" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="需求状态" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.status" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="行方人员" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.bankOP" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="开发人员" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.devOP" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="测试人员" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.testOP" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="案例总数" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.Totaltestcase" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="总执行数" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.Totaltestcasepass" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="未修缺陷" width="78">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.Notrepairedbug" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="操作" width="55">
+                                        <template scope="scope">
+
+                                            <el-button type="text" @click="deleteDemandInfo(scope.row.demandID,scope.row.demandName,scope.row.ID)" class="el-icon-delete" title="删除">删除</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <div class="block" style="float: right;margin-bottom: 15px;margin-top:10px;">
+
+                            <el-pagination @size-change="demandSizeChange"
+                                           @current-change="demandCurrentChange"
+                                           :current-page.sync="demandPageIndex"
+                                           :page-size="demandPageSize"
+                                           layout="prev, pager, next, jumper"
+                                           :total="demandTotalRows">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+              <el-col :span="8">
+                       
+                        <div class="grid-content bg-purple-light">
+
+                            <el-form :model="demandInfo" :rules="demands" ref="demandInfo" inline label-width="165px" class="demo-ruleForm">
+
+                                </el-form-item><br />
+                                <el-form-item label="需求状态">
+                                    <el-select v-model="demandInfo.status" placeholder="选择模块" style="width: 420px">
+                                        <el-option label="未开始" value="未开始"></el-option>
+                                        <el-option label="执行中" value="执行中"></el-option>
+                                        <el-option label="暂停" value="暂停"></el-option>
+                                        <el-option label="障碍" value="障碍"></el-option>
+                                        <el-option label="已完成" value="已完成"></el-option>
+                                    </el-select>
+                                </el-form-item><br />
+                                <el-form-item label="需求名称">
+                                    <el-input v-model="demandInfo.demandName" placeholder="需求名称" style="width: 420px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="行方负责人">
+                                    <el-input v-model="demandInfo.kjb" placeholder="行方负责人" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="业务负责人">
+                                    <el-input v-model="demandInfo.bankOP" placeholder="业务负责人
+                                " style="width: 120px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="开发人员">
+                                    <el-input v-model="demandInfo.devOP" placeholder="开发人员" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="测试人员">
+                                    <el-input v-model="demandInfo.testOP" placeholder="测试人员" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="内部提测时间">
+                                    <el-date-picker v-model="demandInfo.sitTestTime" style="width: 120px"
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+
+                                </el-form-item>
+                                <el-form-item label="内部测试完成时间">
+                                    <el-date-picker v-model="demandInfo.sitComplatetime" style="width: 120px"
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item><br />
+                                <el-form-item label="预计完成时间">
+                                    <el-date-picker v-model="demandInfo.estmateComplateTime" style="width: 120px"
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="预计投产时间">
+                                    <el-date-picker v-model="demandInfo.estmateProductionTime" style="width: 120px; "
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item><br />
+                                <el-form-item label="行方提业务测时间">
+                                    <el-date-picker v-model="demandInfo.uatTestDatetime" style="width: 120px; "
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="要求业务完成测试时间">
+                                    <el-date-picker v-model="demandInfo.uatFinishDatetime" style="width: 120px"
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item><br />
+                                    <el-form-item label="案例总数">
+                                        <el-input v-model="demandInfo.Totaltestcase " placeholder="案例总数
+                                " style="width: 120px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="案例总执行数">
+                                        <el-input v-model="demandInfo.Totaltestcasepass" placeholder="案例总执行数
+                                " style="width: 120px"></el-input>
+                                    </el-form-item><br />
+                                    <el-form-item label="今日执行数">
+                                        <el-input v-model="demandInfo.Todaytestcasepass" placeholder="今日执行数
+                                " style="width: 120px"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="总缺陷">
+                                        <el-input v-model="demandInfo.Totalbug" placeholder="总缺陷
+                                " style="width: 120px"></el-input>
+                                    </el-form-item><br />
+                                    <el-form-item label="未修复缺陷">
+                                        <el-input v-model="demandInfo.Notrepairedbug" placeholder="未修复缺陷
+                                " style="width: 120px"></el-input>
+                                    </el-form-item><br />
+                                <el-form-item label="备注">
+                                    <el-input v-model="demandInfo.remark" placeholder="备注
+                                " style="width: 420px"></el-input>
+                                    </el-form-item>
+
+
+                                    <el-form-item style="float:right;padding-right:70px">
+                                        <el-button type="primary" @click="saveDemandInfo()">提交</el-button>
+                                    </el-form-item>
+</el-form>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="缺陷管理" name="third">
+
+                <el-form inline class="demo-form-inline">
+                    <!--<el-form-item label="缺陷筛选">
+                        <el-select v-model="forum.cardGroupName" placeholder="筛选类型">
+                            <el-option label="需求名称" value=""></el-option>
+                            <el-option label="功能模块" value="1"></el-option>
+                            <el-option label="测试人员" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>-->
+                    <el-form-item label="缺陷编号">
+                        <el-input v-model="forum.defectNo" placeholder="缺陷编号" style="width:350px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="float:left;margin-right:20px;" icon="search" @click="getDefectList(1)">查询</el-button>
+                        <a id="dp" :href="downloadurl" class="a-css" style="display: block;"><span id="fp">导出</span></a>
+
+                    </el-form-item>
+
+                </el-form>
+                <el-row>
+                    <el-col :span="12">
+                        <div class="grid-content bg-purple">
+                            <template>
+                                <el-table :data="defectList"
+                                          v-loading="loading1"
+                                          element-loading-text="拼命加载中"
+                                          style="width:100%;" height="720">
+                                    <el-table-column type="index" label="#" width="40">
+                                    </el-table-column>
+                                    <el-table-column label="缺陷名称">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.defectName" @click="getDefectContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+
+                                    <el-table-column label="操作" width="55">
+                                        <template scope="scope">
+
+                                            <el-button type="text" @click="deleteDefectInfo(scope.row.defectNo,scope.row.defectName,scope.row.ID)" class="el-icon-delete" title="删除">删除</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <div class="block" style="float: right;margin-bottom: 15px;margin-top:10px;">
+
+                            <el-pagination @size-change="defectSizeChange"
+                                           @current-change="defectCurrentChange"
+                                           :current-page.sync="defectPageIndex"
+                                           :page-size="defectPageSize"
+                                           layout="prev, pager, next, jumper"
+                                           :total="defectTotalRows">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+                    <el-col :span="12">
+
+                        <div class="grid-content bg-purple-light">
+
+                            <el-form :model="defectInfo" :rules="defects" :ref="defectInfo" inline label-width="120px" class="demo-ruleForm">
+
+                                </el-form-item><br />
+                                <el-form-item label="缺陷编号">
+                                    <el-input v-model="defectInfo.defectNo" placeholder="缺陷编号" style="width: 424px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="缺陷名称">
+                                    <el-input v-model="defectInfo.defectName" placeholder="缺陷名称" style="width: 424px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="功能模块">
+                                    <el-input v-model="defectInfo.functionModule" placeholder="功能模块" style="width: 424px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="功能点">
+                                    <el-input v-model="defectInfo.functionPoint" placeholder="功能点" style="width: 424px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="缺陷描述">
+                                    <el-input v-model="defectInfo.defectDescription" placeholder="缺陷描述" style="width: 424px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="严重程度">
+                                    <el-select v-model="defectInfo.yzcd" placeholder="严重程度" style="width: 145px">
+                                        <el-option label="较小错误" value="较小错误"></el-option>
+                                        <el-option label="中等错误" value="中等错误"></el-option>
+                                        <el-option label="严重错误" value="严重错误"></el-option>
+                                        <el-option label="致命错误" value="致命错误"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="缺陷来源">
+                                    <el-select v-model="defectInfo.defectSource" placeholder="缺陷来源" style="width: 145px">
+                                        <el-option label="需求问题" value="需求问题"></el-option>
+                                        <el-option label="错误理解需求" value="错误理解需求"></el-option>
+                                        <el-option label="代码错误" value="代码错误"></el-option>
+                                        <el-option label="修改缺陷" value="修改缺陷"></el-option>
+                                        <el-option label="外部问题" value="外部问题"></el-option>
+                                        <el-option label="测试问题" value="测试问题"></el-option>
+                                        <el-option label="其他" value="其他"></el-option>
+
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="优先级">
+                                    <el-select v-model="defectInfo.defectGrade" placeholder="缺陷优先级" style="width: 145px">
+                                        <el-option label="立即修复" value="立即修复"></el-option>
+                                        <el-option label="排队修复" value="排队修复"></el-option>
+                                        <el-option label="暂不修复" value="暂不修复"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="缺陷状态">
+                                    <el-select v-model="defectInfo.status" placeholder="缺陷状态" style="width: 145px">
+                                        <el-option label="已提交" value="已提交"></el-option>
+                                        <el-option label="已确认" value="已确认"></el-option>
+                                        <el-option label="修复中" value="修复中"></el-option>
+                                        <el-option label="非缺陷" value="非缺陷"></el-option>
+                                        <el-option label="已修复" value="已修复"></el-option>
+                                    </el-select>
+                                </el-form-item><br />
+                                <el-form-item label="开发人员">
+                                    <el-input v-model="defectInfo.devOP" placeholder="开发人员" style="width: 145px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="测试人员">
+                                    <el-select v-model="defectInfo.testOP" placeholder="测试人员" style="width: 145px">
+                                        <el-option label="赵成旭" value="赵成旭"></el-option>
+                                        <el-option label="钱佳磊" value="钱佳磊"></el-option>
+                                        <el-option label="龙茂莎" value="龙茂莎"></el-option>
+                                        <el-option label="陈亚男" value="陈亚男"></el-option>
+                                        <el-option label="刘美兰" value="刘美兰"></el-option>
+                                        <el-option label="吴茜茜" value="吴茜茜"></el-option>
+                                        <el-option label="王翊武" value="王翊武"></el-option>
+
+                                    </el-select>
+                                </el-form-item><br />
+                                <el-form-item label="相关案例编号">
+                                    <el-input v-model="defectInfo.caseID" placeholder="相关案例编号" style="width: 424px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="相关需求编号">
+                                    <el-input v-model="defectInfo.demandID" placeholder="相关需求编号" style="width: 424px"></el-input>
+                                </el-form-item>
+                               
+                                <el-form-item label="缺陷分析">
+                                    <el-input v-model="defectInfo.defectFX" placeholder="缺陷分析" style="width: 424px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="发现时间">
+                                    <el-date-picker v-model="defectInfo.findDatetime" style="width: 145px"
+                                                    type="datetime"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                                <el-form-item label="备注">
+                                    <el-input v-model="defectInfo.remark" placeholder="备注" style="width: 145px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item style="float:right;padding-right:70px">
+                                    <el-button type="primary" @click="saveDefectInfo()">提交</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-tab-pane>         
+            <el-tab-pane label="网银论坛" name="four">
+                <el-form inline class="demo-form-inline">
+                    <el-form-item label="贴组名称">
+                        <el-select v-model="forum.cardGroupName" placeholder="贴组名称">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option label="开发论坛" value="1"></el-option>
+                            <el-option label="测试论坛" value="2"></el-option>
+                            <el-option label="灌水杂谈" value="3"></el-option>
+                            <el-option label="测试数据" value="4"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="帖子名称">
+                        <el-input v-model="forum.cardName" placeholder="帖子名称" style="width:350px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="float:left;margin-right:20px;" icon="search" @click="getForumList(1)">查询</el-button>
+                        <!--<a id="dp" href="downloadurl" class="a-css" style="display: block;"><span id="fp">导出</span></a>-->
+
+                        <span style="float: left; margin-left: 30px; font-size: 14px; color: #007314; font-weight: bold;">
+                            <el-button type="default" size="big" class="el-icon-circle-plus-outline" title="发帖" @click="sendPost()">发帖</el-button>
+                        </span>
+                    </el-form-item>
+
+                </el-form>
+                <el-row>
+                    <el-col :span="23">
+                        <div class="grid-content bg-purple" >
+                            <template>
+                                <el-table :data="forumList"
+                                          v-loading="loading1"
+                                          element-loading-text="拼命加载中"
+                                          style="width:100%; overflow-y:auto" height="530">
+                                    <el-table-column prop="ID"
+                                                     :formatter="formatter"
+                                                     label="序号"
+                                                     width="50">
+                                    </el-table-column>
+                                    <el-table-column label="帖子名称">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.startPostName" @click="postDetails(scope.row)" style="display: block;cursor:pointer;"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="发帖人" width="115">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.startPostOP"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="发帖时间" width="160">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.startPostTime"></label>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column label="操作" width="100">
+                                        <template scope="scope">
+                                            <el-button v-if="sessionName==scope.row.startPostOP" type="text" @click="deletePostInfo(scope.row.ID)">删除</el-button>
+                                            <el-button v-if="sessionName==scope.row.startPostOP" type="text" @click="editPostInfo(scope.row);">编辑</el-button>
+                                            <!--<a id="dp" href="#" class="a-css" style="display: block;"><span id="fp">编辑</span></a>-->
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <div class="block" style="float: right;margin-bottom: 15px;margin-top:10px;">
+
+                            <el-pagination @size-change="forumSizeChange"
+                                           @current-change="forumCurrentChange"
+                                           :current-page.sync="forumPageIndex"
+                                           :page-size="forumPageSize"
+                                           layout="prev, pager, next, jumper"
+                                           :total="forumTotalRows">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+                </el-row>
+                
+                <el-dialog title="发帖" :visible.sync="dialogFormVisible" width="100%" >
+
+                    <el-form :model="forumForm" :rules="forums" ref="forumForm" inline label-width="100px" class="demo-ruleForm">
+
+                        <el-form-item label="标题">
+                            <el-input v-model="forumForm.postName" placeholder="标题" style="width:300px"></el-input>
+                            <el-select v-model="forumForm.postGroupName" placeholder="选择模块">
+                                <el-option label="开发论坛" value="1"></el-option>
+                                <el-option label="测试论坛" value="2"></el-option>
+                                <el-option label="灌水杂谈" value="3"></el-option>
+                                <el-option label="测试数据" value="4"></el-option>
+                            </el-select>
+                        </el-form-item><br />
+                        <el-form-item label="内容">
+                            <el-input type="textarea" v-model="forumForm.postContent" :maxlength="800" placeholder="内容" style="width:500px" :autosize="{ minRows:20, maxRows: 25}"></el-input>
+                            <template>
+                                <div>
+                                    <script id="editor" type="text/plain" style="width:1024px;height:500px;">
+                                    </script>
+                                </div>
+                            </template>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogFormVisible = false;submitPost()">确 定</el-button>
+                    </div>
+                </el-dialog>
+
+            </el-tab-pane>
+        <!--   <el-tab-pane label="数据管理" name="five">
+                <el-button type="text" @click="importDemandExcel()">导入Excel</el-button>
+
+                <el-form inline class="demo-form-inline">
+                    <el-form-item label="使用范围">
+                        <el-input v-model="demands.demandName" placeholder="使用范围" style="width:350px;"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" style="float:left;margin-right:20px;" icon="search" @click="getDemandList(1)">查询</el-button>
+                        <a id="dp" :href="downloadurl" class="a-css" style="display: block;"><span id="fp">导出</span></a>
+
+                    </el-form-item>
+
+                </el-form>
+                <el-row>
+                    <el-col :span="12">
+                        <div class="grid-content bg-purple">
+                            <template>
+                                <el-table :data="demandList"
+                                          v-loading="loading1"
+                                          element-loading-text="拼命加载中"
+                                          style="width:100%;" height="720">
+                                    <el-table-column type="index" label="#" width="40">
+                                    </el-table-column>
+                                    <el-table-column label="使用范围">
+                                        <template scope="scope">
+                                            <label v-html="scope.row.demandName" @click="getContent(scope.row)"></label>
+                                        </template>
+                                    </el-table-column>
+
+                                    <el-table-column label="操作" width="55">
+                                        <template scope="scope">
+
+                                            <el-button type="text" @click="deleteDemandInfo(scope.row.demandID,scope.row.demandName,scope.row.ID)" class="el-icon-delete" title="删除">删除</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </div>
+                        <div class="block" style="float: right;margin-bottom: 15px;margin-top:10px;">
+
+                            <el-pagination @size-change="demandSizeChange"
+                                           @current-change="demandCurrentChange"
+                                           :current-page.sync="demandPageIndex"
+                                           :page-size="demandPageSize"
+                                           layout="prev, pager, next, jumper"
+                                           :total="demandTotalRows">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+                    <el-col :span="12">
+
+                        <div class="grid-content bg-purple-light">
+
+                            <el-form :model="demandInfo" :rules="demands" :ref="demandInfo" inline label-width="165px" class="demo-ruleForm">
+
+                                </el-form-item><br />
+                                <el-form-item label="使用范围">
+                                    <el-input v-model="demandInfo.demandName" placeholder="使用范围" style="width: 420px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="测试地址">
+                                    <el-input v-model="demandInfo.demandName" placeholder="测试地址" style="width: 420px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="客户号">
+                                    <el-input v-model="demandInfo.kjb" placeholder="客户号" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="提供人">
+                                    <el-input v-model="demandInfo.bankOP" placeholder="提供人" style="width: 120px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item label="登录密码">
+                                    <el-input v-model="demandInfo.devOP" placeholder="登录密码" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="交易密码">
+                                    <el-input v-model="demandInfo.testOP" placeholder="交易密码" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="手机号">
+                                    <el-input v-model="demandInfo.kjb" placeholder="手机号" style="width: 120px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="导入时间">
+                                    <el-date-picker v-model="demandInfo.sitTestTime" style="width: 120px"
+                                                    type="date"
+                                                    placeholder="选择日期">
+                                    </el-date-picker>
+
+                                </el-form-item>
+                                <el-form-item label="其他条件1">
+                                    <el-input v-model="demandInfo.demandType" placeholder="其他条件1" style="width: 420px"></el-input>
+                                </el-form-item>
+                                <el-form-item label="其他条件2">
+                                    <el-input v-model="demandInfo.demandType" placeholder="其他条件2" style="width: 420px"></el-input>
+                                </el-form-item><br />
+                                <el-form-item style="float:right;padding-right:70px">
+                                    <el-button type="primary" @click="saveDemandInfo()">提交</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-tab-pane>
+        </el-tabs>--> 
+
+        <el-upload class="upload-demo"
+                   ref="upload"
+                   :action="uploadUrl"
+                   :on-change="uploadChange"
+                   :on-success="uploadSuccess"
+                   :file-list="fileList3">
+            <el-button size="small" type="primary" id="uploadFileId" style="display:none">导入</el-button>
+
+        </el-upload>
+
+    </div>
+
+</body>
+</html>
+<script src="js/jquery-3.2.1.min.js" charset="UTF-8"></script>
+<script src="src/multitabs/multitabs.js?v=2"></script>
+<script src="vue/dist/vue.js" charset="UTF-8"></script>
+<script src="element-ui/lib/index.js" charset="UTF-8"></script>
+<script src="js/comm.js" charset="UTF-8"></script>
+<script src="js/index.js"></script>

@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>登录页面</title>    
+    <meta charset="utf-8">
+
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+
+    <link href="css/jquery.toast.min.css" rel="stylesheet" />
+    <link href="css/login.css" rel="stylesheet" />
+    <link href="css/pace-theme-minimal.css" rel="stylesheet" />
+    <script src="js/pace.min.js"></script>
+
+</head>
+<body onkeydown="keyLogin();">
+
+    <div id="particles-js">
+        <div id="l_main">
+            <div id="l_box">
+                <h3>SPDB测试管理平台</h3>
+                <hr>
+                <div class="l_input">
+                    <span>账号：</span>
+                    <input type="text" id="username-input" value="">
+                </div>
+                <div class="l_input">
+                    <span>密码：</span>
+                    <input type="password" id="pwd-input" value="">
+                </div>
+                <div class="l_tips">
+                    <span>还没有账号？马上注册申请，请联系<a href="#">平台管理员</a></span>
+                </div>
+                <div class="l_tips2">
+                    <span>用户名或密码不正确</span>
+                </div>
+                <div class="l_btn">
+                    <a href="javascript:void(0)" id="submitId" onclick="userLogincheck()">登 陆</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.toast.min.js"></script>
+  <script src="js/particles.min.js"></script>
+   <!--<script src="js/app.js"></script>-->
+    <script src="js/stats.js"></script>
+    <script src="js/comm.js"></script>
+
+
+    <script type="text/javascript">
+
+        //登陆
+        function userLogincheck() {
+
+            $("#submitId").html("登录中...")
+            var userName = $("#username-input").val();
+            var pwd = $("#pwd-input").val();
+
+            var jsonStr = {
+                userName: userName,
+                pwd: pwd,
+                type: 1  //type:1 登录  0：退出
+            };
+
+            if (userName.length < 1 && pwd.length < 1) {
+                alertMessage("请输入用户名和密码!");
+            }
+            else if (pwd.length < 1) {
+                alertMessage("请输入密码!");
+            }
+            else if (userName.length < 1) {
+                alertMessage("请输入用户名!");
+            }
+            else {
+
+                $.when(getJSON("Handler/UserMsg.ashx", jsonStr)).then(function (res) {
+                    
+                    if (res.success=="True") {
+
+                        window.location.href = "index.html";
+                    }
+                    else {
+                        alertMessage("用户名或密码错误!");
+                    }
+
+                }, function (xhr) {
+                    alertMessage("当前登录发生了错误，请稍后再试!");
+
+                });
+            }
+
+        }
+        function alertMessage(errMsg) {
+            $.toast({
+                heading: '错误信息',
+                text: errMsg,
+                icon: 'error',
+                position: 'top-right',
+                textColor: 'white'
+            })
+        }
+
+        function keyLogin() {
+            if (event.keyCode == 13)  //回车键的键值为13
+                $("#submitId").click(); //调用登录按钮的登录事件
+        }
+
+    </script>
+    <script language="JavaScript">
+
+        if (navigator.userAgent.indexOf('Firefox') >= 0) {
+            alert('无法使用火狐浏览器打开，请更换浏览器');
+            $("html").remove();
+        }
+
+    </script>
+</body>
+</html>

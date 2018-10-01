@@ -1,0 +1,91 @@
+html {
+    width: 100%;
+
+    overflow: hidden;
+}
+body{
+
+
+
+}
+.loginpage-div {
+
+    position: relative;
+}
+
+.login-div {
+    width: 350px;
+    height: 241px;
+    background: #fff;
+    position: fixed;
+    left: 50%;
+    top: 40%;
+    margin-left: -175px;
+    margin-top: -110px;
+    z-index: 1000;
+    box-shadow: 0 5px 5px 0;
+    border-radius: 6px;
+}
+
+.login-title, .logout-title {
+    width: 100%;
+    height: 22%;
+    border-bottom: 2px solid #808080;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    position: relative;
+}
+
+    .login-title span:nth-child(1) {
+        display: inline-block;
+        height: 46px;
+        width: 100%;
+        text-align: center;
+        line-height: 46px;
+        font-size:25px;
+    }
+
+.login_null_tip, .err-tip-span {
+    display: inline-block;
+    height: 30px;
+    color: #333;
+    background: #fcf8e3;
+    font-size: 1.5rem;
+    width: 184px;
+    text-align: center;
+    position: absolute;
+    top: 10px;
+    margin-left: 20px;
+    line-height: 30px;
+}
+
+.login-body, logout-body {
+    width: 100%;
+    height: 77%;
+    position: relative;
+    font-size: 13px;
+}
+
+    .login-body span {
+        display: block;
+        margin: 6px 20px;
+        font-size:15px;
+    }
+
+    .login-body input {
+        margin-left: 20px;
+        width: 85%;
+        background: #f2f2f2;
+        padding-left: 7px;
+        border: 1px solid #808080;
+        height:30px;
+        border-radius: 3px;
+    }
+
+.user-login-btn {
+    position: relative;
+    width: 226px;
+    margin: 20px 0px 10px 55px;
+    background-color: #56c1e1;
+    border-radius: 3px;
+}

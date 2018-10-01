@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>敏捷测试管理平台</title>
+    <link href="element-ui/lib/theme-default/index.css" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 微软雅黑;
+        }
+
+        body {
+            margin: 0 2px;
+        }
+
+        .demo-table-expand {
+            font-size: 0;
+        }
+
+            .demo-table-expand label {
+                width: 90px;
+                color: #99a9bf;
+            }
+
+            .demo-table-expand .el-form-item {
+                margin-right: 0;
+                margin-bottom: 0;
+                width: 50%;
+            }
+
+        .demo-table-expand2 .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 33%;
+        }
+
+        .sub-title {
+            color: #48576a;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .el-table2 {
+            border: 1px solid #eee;
+        }
+
+        .a-css {
+            width: 28px;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            background: #fff;
+            border: 1px solid #c4c4c4;
+            color: #1f2d3d;
+            margin: 0;
+            padding: 10px 15px;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+            float: left;
+            margin-right: 20px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .el-pager li.active {
+            border-color: #003473;
+            background-color: #003473;
+            color: #fff;
+            cursor: default;
+        }
+
+        .el-button--primary:focus, .el-button--primary:hover {
+            background: #003473;
+            border-color: #003473;
+            color: #fff;
+        }
+
+        .el-tabs__item {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+            .el-tabs__item.is-active {
+                color: #003473;
+            }
+
+        .el-button--text {
+            border: none;
+            color: #003473;
+            background: 0 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .el-button--primary {
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+        }
+
+        .caseListCss {
+            display: none;
+        }
+
+        .el-table__expanded-cell {
+            padding: 20px 30px;
+        }
+
+        .el-table .cell, .el-table th > div {
+            padding-left: 10px;
+            padding-right: 10px;
+            box-sizing: border-box;
+            text-overflow: ellipsis;
+        }
+
+        .el-tabs--border-card > .el-tabs__content {
+            padding: 10px;
+        }
+
+        .el-form-item {
+            margin-bottom: 10px;
+        }
+
+        .el-table td, .el-table th {
+            height: 20px;
+            min-width: 0;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            margin: 0;
+            padding: 0;
+        }
+
+        .el-table__expand-icon {
+            height: 20px;
+        }
+
+        .cell .el-button {
+            padding: 7px 0px;
+        }
+
+        .el-icon-arrow-right:before {
+            content: "";
+        }
+
+        .el-form-item__error {
+            color: #ff4949;
+            font-size: 0px;
+            line-height: 1;
+            padding-top: 4px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: -30px;
+        }
+
+        .el-dialog.el-dialog--small {
+            top: 5%;
+        }
+
+        .el-dialog__body {
+            padding: 10px 20px;
+            color: #48576a;
+            font-size: 14px;
+        }
+
+        .el-dialog__footer {
+            padding: 0px 20px 15px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <el-row>
+            <el-col span="12">
+                <div style="margin:9px 10px 3px;"><img src="images/logobg.png" width="300" /></div>
+            </el-col>
+            <el-col span="12">
+                <div style="float:right;margin:10px 20px 10px;">
+                    <el-button type="text" @click="exitLogin()">退出</el-button>
+                </div>
+            </el-col>
+        </el-row>
+
+
+    </div>
+
+</body>
+</html>
+<script src="js/jquery-3.2.1.min.js" charset="UTF-8"></script>
+<script src="src/multitabs/multitabs.js?v=2"></script>
+<script src="vue/dist/vue.js" charset="UTF-8"></script>
+<script src="element-ui/lib/index.js" charset="UTF-8"></script>
+<script src="js/comm.js" charset="UTF-8"></script>
+<script >
+    var app = new Vue({
+        data: function () {
+
+        },
+        methods: {
+
+        }
+    }).$mount("#app");
+
+
+</script>

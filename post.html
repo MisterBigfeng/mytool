@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <link href="element-ui/lib/theme-default/index.css" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 微软雅黑;
+        }
+
+        body {
+            margin: 0 2px;
+        }
+
+        .demo-table-expand {
+            font-size: 0;
+        }
+
+            .demo-table-expand label {
+                width: 90px;
+                color: #99a9bf;
+            }
+
+            .demo-table-expand .el-form-item {
+                margin-right: 0;
+                margin-bottom: 0;
+                width: 50%;
+            }
+
+        .demo-table-expand2 .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 33%;
+        }
+
+        .sub-title {
+            color: #48576a;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .el-table2 {
+            border: 1px solid #eee;
+        }
+
+        .a-css {
+            width: 28px;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            background: #fff;
+            border: 1px solid #c4c4c4;
+            color: #1f2d3d;
+            margin: 0;
+            padding: 10px 15px;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+            float: left;
+            margin-right: 20px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .el-pager li.active {
+            border-color: #003473;
+            background-color: #003473;
+            color: #fff;
+            cursor: default;
+        }
+
+        .el-button--primary:focus, .el-button--primary:hover {
+            background: #003473;
+            border-color: #003473;
+            color: #fff;
+        }
+
+        .el-tabs__item {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+            .el-tabs__item.is-active {
+                color: #003473;
+            }
+
+        .el-button--text {
+            border: none;
+            color: #003473;
+            background: 0 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .el-button--primary {
+            color: #fff;
+            background-color: #003473;
+            border-color: #003473;
+        }
+
+        .caseListCss {
+            display: none;
+        }
+
+        .el-table__expanded-cell {
+            padding: 20px 30px;
+        }
+
+        .el-table .cell, .el-table th > div {
+            padding-left: 10px;
+            padding-right: 10px;
+            box-sizing: border-box;
+            text-overflow: ellipsis;
+        }
+
+        .el-tabs--border-card > .el-tabs__content {
+            padding: 10px;
+        }
+
+        .el-form-item {
+            margin-bottom: 10px;
+        }
+
+        .el-table td, .el-table th {
+            height: 20px;
+            min-width: 0;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            margin: 0;
+            padding: 0;
+        }
+
+        .el-table__expand-icon {
+            height: 20px;
+        }
+
+        .cell .el-button {
+            padding: 7px 0px;
+        }
+
+        .el-icon-arrow-right:before {
+            content: "";
+        }
+
+        .el-form-item__error {
+            color: #ff4949;
+            font-size: 0px;
+            line-height: 1;
+            padding-top: 4px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: -30px;
+        }
+
+        .el-dialog.el-dialog--small {
+            top: 5%;
+        }
+
+        .el-dialog__body {
+            padding: 10px 20px;
+            color: #48576a;
+            font-size: 14px;
+        }
+
+        .el-dialog__footer {
+            padding: 0px 20px 15px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+
+        #box2 {
+            width: 70%;
+            margin: auto;
+            font-family: 微软雅黑;
+            color: #333;
+            font-size:12px;
+        }
+        header {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color:#333;
+        }
+        .el-col label {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            display: block;
+            margin:10px;
+        }
+        .el-col .content {
+            text-indent: 2em;
+            color: #333;
+            font-size: 14px;
+            /*background: #eee;*/
+            border-radius: 2px;
+            line-height:14px;
+        }
+        hr {
+            clear: both;
+            border-top: 1px solid #d1dbe5;
+            border-bottom: none;
+            margin-top: 0px;
+        }
+        .el-button--text{
+            font-size:14px;
+        }
+        .postBg{
+            background:#eee;
+            border-radius:2px;
+            padding:10px;
+            margin-top:10px;
+        }
+        .huifu {
+            text-indent: 4em;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="box">
+        <el-row>
+            <el-col :span="12">
+                <div style="margin:9px 10px 3px;"><img src="images/logobg.png" width="300" /></div>
+            </el-col>
+            <el-col :span="12">
+                <div style="float:right;margin:10px 20px 10px;">
+                    <el-button type="text" @click="exitLogin()">退出</el-button>
+                </div>
+            </el-col>
+        </el-row>
+        <hr />
+
+        <div id="box2">
+            <div v-for="spList in startPostList">
+                <header>{{spList.startPostName}}</header>
+                <el-row>
+                    <el-col>
+                        <label>
+                            楼主：{{spList.startPostOP}}  &nbsp;&nbsp;&nbsp;&nbsp;
+                            时间：{{spList.startPostTime}} &nbsp;&nbsp;&nbsp;&nbsp;
+                            点击量：    &nbsp;&nbsp;&nbsp;&nbsp;
+                            回复：
+                        </label>
+                        <p class="content">
+                            <span v-html="spList.spartPostContent"></span>
+                        </p>
+                    </el-col>
+                    <el-col>
+                        <div style="text-align:right;padding-right:30px;font-size:14px;border-top:1px solid #ddd;">
+                            <el-button type="text" @click="dialogFormVisible=true;">回复</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+            </div>
+            <div v-for="rpList in ReplyPostList">
+                <el-row>
+                    <el-col>
+                        <div class="postBg">
+                            回复人：{{rpList.replyOP}}  {{rpList.replyTime}}
+
+                            <p class="huifu">
+                                {{rpList.replyContent}}
+                            </p>
+                        </div>
+                    </el-col>
+                </el-row>
+            </div>
+            <el-dialog title="回帖" :visible.sync="dialogFormVisible">
+                <el-form :model="forumForm" :rules="forums" ref="forumForm" inline label-width="100px" class="demo-ruleForm">
+
+                    <el-form-item label="回复:">
+                        <el-input type="textarea" v-model="forumForm.replayContent" placeholder="内容" style="width:500px" :autosize="{ minRows: 10, maxRows: 10}"></el-input>
+                    </el-form-item>
+
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="dialogFormVisible = false;submitHuiFu()">提 交</el-button>
+                </div>
+            </el-dialog>
+        </div>
+</div>
+    <script src="js/jquery-3.2.1.min.js" charset="UTF-8"></script>
+    <script src="src/multitabs/multitabs.js?v=2"></script>
+    <script src="vue/dist/vue.js" charset="UTF-8"></script>
+    <script src="element-ui/lib/index.js" charset="UTF-8"></script>
+    <script src="js/comm.js" charset="UTF-8"></script>
+
+    <script type="text/javascript">
+        var id = getUrlParam("id");
+
+        var box = new Vue({
+            data: function () {
+                return {
+                    startPostList: [{
+                        ID: undefined,
+                        startPostName: undefined,
+                        spartPostContent: undefined,
+                        startPostOP: undefined,
+                        startPostTime: undefined
+                    }],
+                    ReplyPostList: [{
+                        ID: undefined
+                        , replyOP: undefined
+                        , replyTime: undefined
+                        , replyContent: undefined
+                        , PostID: undefined
+                        , replyChildID: undefined
+                    }],
+                    postName: undefined,
+                    postContent: undefined,
+                    postOP: undefined,
+                    postDatetime: undefined,
+                    dialogFormVisible: false,
+                    forumForm: {
+                        replayContent: undefined
+                    },
+                    forums: {
+
+                    }
+                }
+            },
+            methods: {
+                getForumList: function () {
+                    var obj = {};
+                    obj.id = id;
+
+                    obj.type = 2;
+
+                    var _self=this;
+
+                    getJSON("Handler/ForumMsg.ashx", obj).then(function (res) {
+                        console.log(res)
+                        
+                        if (res.Table != undefined) {
+                            _self.startPostList = res.Table;
+                        }
+                        if (res.Table1 != undefined) {
+                            _self.ReplyPostList = res.Table1;
+                        }
+                        //_self.startPostID = res.dRFFCcvcfccccvvWXXataList[0]["startPostID"];
+                        //_self.postName = res.dataList[0]["startPostName"];
+                        //_self.postContent = res.dataList[0]["spartPostContent"];
+                        //_self.postOP = res.dataList[0]["startPostOP"];
+                        //_self.postDatetime = res.dataList[0]["startPostTime"];
+
+                        //_self.ReplyPostID = res.dataList[1]["ReplyPostID"];
+                        //_self.replyOP =     res.dataList[1]["replyOP"];
+                        //_self.replyTime =   res.dataList[1]["replyTime"];
+                        //_self.replyContent = res.dataList[1]["replyContent"];
+                        //_self.PostID =      res.dataList[1]["PostID"];
+                        //_self.replyChildID = res.dataList[1]["replyChildID"];
+
+                    });
+                },
+                submitHuiFu: function () {
+                    var obj = {};
+                    obj.startPostID = id;
+                    obj.replayContent = box.forumForm.replayContent;
+                    obj.type = 4;//回帖
+                    
+                    getJSON("Handler/ForumMsg.ashx", obj).then(function (res) {
+                        box.getForumList();
+                    });
+                },
+                /**
+                 * 退出登陆
+                 */
+                exitLogin: function () {
+                    var jsonStr = {
+                        userName: '',
+                        pwd: '',
+                        type: -1  //type:1 登录  -1：退出
+                    };
+                    getJSON("Handler/UserMsg.ashx", jsonStr).then(function (res) {
+
+                        if (res.success == "True") {
+
+                            window.location.href = "login.html";
+                        }
+                    });
+                },
+            }
+        }).$mount("#box");
+        box.getForumList();
+    </script>
+</body>
+</html>
